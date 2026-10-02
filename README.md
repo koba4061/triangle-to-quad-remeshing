@@ -22,12 +22,12 @@ flowchart LR
 
 Pick a sample from the list, or choose `upload` and send your own GLB. Samples and the program come from `inputs/` and `brief153_colab.zip` in this repository.
 
-You get two files.
+You get two files, named from the input. `03_golden_scale_dragon.glb` becomes the names below. The download zip uses the same stem.
 
 | File | Contents |
 | --- | --- |
-| `quad.obj` | Quad faces, with vertices, normals, and vertex colors |
-| `color.obj` | The same quads, with vertex colors only. Open this one |
+| `03_golden_scale_dragon_quad.obj` | Quad faces, with vertices, normals, and vertex colors |
+| `03_golden_scale_dragon_color.obj` | The same quads, with vertex colors only. Open this one |
 
 Each vertex is `v x y z r g b`. RGB is from 0 to 1. No materials and no textures are written. For metalness, roughness, or a normal map, bake them yourself in Blender. Use the original GLB as the source and this quad OBJ as the target.
 
@@ -85,7 +85,15 @@ The run stops before training when too many triangles are skinny: height under 2
 
 Colab, NVIDIA A100-SXM4-40GB, 2 October 2026. Input `03_golden_scale_dragon.glb`.
 
-The graph network stopped at epoch 188 of 200. The whole quad pipeline took 15 minutes 27 seconds. Training on this GPU was 21 seconds. Extraction and surface fit took 9 minutes 14 seconds.
+The graph network stopped at epoch 188 of 200.
+
+| Stage | Time |
+| --- | --- |
+| Prepare (skinny check, repair) | 1 min 57 s |
+| Clean and features | 3 min 55 s |
+| Training, stop at epoch 188 of 200 | 21 s |
+| Extract quads and fit the surface | 9 min 14 s |
+| Quad pipeline, total | 15 min 27 s |
 
 | | |
 | --- | --- |
