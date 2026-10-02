@@ -145,6 +145,10 @@ The graph network stopped at epoch 197 of 200.
 | Vertex-color OBJ | 120,422,602 bytes |
 | Quality | score 0.114, pole ratio 0.033, passed |
 
+Shaded view. Left is the original triangle mesh. Right is the quad mesh.
+
+<img src="images/butterfly_input_shaded.jpg" width="320" alt="Original GLB"> <img src="images/butterfly_quad_shaded.jpg" width="320" alt="Quad mesh, shaded">
+
 Close-up of the original triangle mesh, then its materials. The output does not keep those materials.
 
 <img src="images/butterfly_input_triangles.jpg" width="320" alt="Input triangles"> <img src="images/butterfly_input_color.jpg" width="320" alt="Input GLB">
