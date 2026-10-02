@@ -3,7 +3,9 @@
 **Yosuke Kobayashi（小林洋介）**  
 https://yosuke4061.com/
 
-One triangle mesh (GLB) becomes a quad mesh (OBJ). Edge directions follow a cross field learned from that mesh. Colors are not painted anew. The original mesh colors are copied onto the quad vertices.
+The core is two steps. A graph network builds a cross field on the triangle mesh: a direction at each point, learned from that mesh alone. Instant Meshes then lays the quad faces along that field.
+
+The result is a quad mesh (OBJ). Colors are not painted anew. The original mesh colors are copied onto the quad vertices.
 
 Run the notebook in Colab from top to bottom. Use a GPU runtime with Python 3.13. Do not change the runtime after you start. This notebook does not use ComfyUI.
 
@@ -31,7 +33,7 @@ Each vertex is `v x y z r g b`. RGB is from 0 to 1. No materials and no textures
 
 ## What it does
 
-The graph network chooses a direction at each point on the surface. Instant Meshes receives that direction and builds the quad faces.
+The graph network writes the cross field. Instant Meshes reads that field and builds the quad faces.
 
 ```mermaid
 flowchart TB
