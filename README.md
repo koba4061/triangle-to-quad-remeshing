@@ -33,6 +33,8 @@ You get two files, named from the input. `03_golden_scale_dragon.glb` becomes th
 
 PBR materials and textures on the input GLB are discarded. The output mesh bakes vertex color only. Each vertex is `v x y z r g b`, with RGB from 0 to 1. Metalness, roughness, normal maps, and image textures are not in the OBJ. If you need PBR materials or other surface work after this, do that in Blender or another tool. Use the original GLB as the source and this quad OBJ as the target.
 
+790,000 faces is the line. An input at or under that count is used as it is. An input over 790,000 faces is reduced to 790,000 for the cross field and for Instant Meshes. The quad count is taken from that reduced mesh. The new vertices are then moved back onto the original surface.
+
 ## What it does
 
 The graph network writes the cross field. Instant Meshes reads that field and builds the quad faces.
@@ -79,7 +81,7 @@ flowchart TB
 
 The graph network is a GraphSAGE model. It sits on this mesh graph. Curvature comes from a local surface fit.
 
-An input with more than 790,000 faces is reduced to 790,000 for the field and for Instant Meshes. The quad count is taken from that reduced face count. The new vertices are then moved back onto the original surface.
+790,000 faces is the line, as in Caution. Over that, the field and Instant Meshes use a 790,000-face mesh, then the vertices move back onto the original surface.
 
 The run stops before training when too many triangles are skinny: height under 2% of the longest edge, on more than 0.15% of the faces. It also stops when Instant Meshes returns no faces.
 
