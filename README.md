@@ -105,17 +105,17 @@ The graph network stopped at epoch 188 of 200.
 | Vertex-color OBJ | 79,321,939 bytes |
 | Quality | score 0.127, pole ratio 0.065, passed |
 
-Input triangles.
+Shaded view. Left is the original triangle mesh. Right is the quad mesh.
 
-![Input triangles](images/dragon_input_triangles.png)
+<img src="images/dragon_input_shaded.jpg" width="320" alt="Original GLB"> <img src="images/dragon_quad_shaded.jpg" width="320" alt="Quad mesh, shaded">
 
-![Input color](images/dragon_input_color.jpg)
+Input triangles, then color.
 
-Quad mesh from the learned cross field.
+<img src="images/dragon_input_triangles.jpg" width="320" alt="Input triangles"> <img src="images/dragon_input_color.jpg" width="320" alt="Input color">
 
-![Quad mesh](images/dragon_quad_wire.png)
+Quad wireframe, then vertex color.
 
-![Quad vertex color](images/dragon_quad_color.jpg)
+<img src="images/dragon_quad_wire.jpg" width="320" alt="Quad wireframe"> <img src="images/dragon_quad_color.jpg" width="320" alt="Quad vertex color">
 
 ## References
 
