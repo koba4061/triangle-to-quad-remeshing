@@ -121,6 +121,38 @@ Quad wireframe, then vertex color.
 
 <img src="images/dragon_quad_wire.jpg" width="320" alt="Quad wireframe"> <img src="images/dragon_quad_color.jpg" width="320" alt="Quad vertex color">
 
+## Example: butterfly wing jewelry box
+
+Colab, NVIDIA A100-SXM4-40GB, 2 October 2026. Input `07_butterfly_wing_jewelry_box.glb`. Under the 790,000-face line, so that cap did not reduce it.
+
+The graph network stopped at epoch 197 of 200.
+
+| Stage | Time |
+| --- | --- |
+| Prepare (skinny check, repair) | 1 min 54 s |
+| Clean and features | 3 min 51 s |
+| Training, stop at epoch 197 of 200 | 17 s |
+| Extract quads and fit the surface | 16 min 23 s |
+| Quad pipeline, total | 22 min 25 s |
+
+| | |
+| --- | --- |
+| Input | 85,832,604 bytes, 572,657 vertices, 683,393 triangles |
+| Field mesh | 330,730 vertices |
+| Quad target | 262,843 |
+| Output | 1,284,683 vertices, 1,261,726 quads |
+| Quad OBJ | 201,909,705 bytes |
+| Vertex-color OBJ | 120,422,602 bytes |
+| Quality | score 0.114, pole ratio 0.033, passed |
+
+Close-up of the original triangle mesh, then its materials. The output does not keep those materials.
+
+<img src="images/butterfly_input_triangles.jpg" width="320" alt="Input triangles"> <img src="images/butterfly_input_color.jpg" width="320" alt="Input GLB">
+
+Quad wireframe, then vertex color.
+
+<img src="images/butterfly_quad_wire.jpg" width="320" alt="Quad wireframe"> <img src="images/butterfly_quad_color.jpg" width="320" alt="Quad vertex color">
+
 ## References
 
 1. Dong et al. NeurCross: A neural approach to computing cross fields for quad mesh generation. *ACM Transactions on Graphics* (SIGGRAPH), 2025. https://arxiv.org/abs/2405.13745
