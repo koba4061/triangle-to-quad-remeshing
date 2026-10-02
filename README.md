@@ -3,6 +3,9 @@
 **Yosuke Kobayashi（小林洋介）**  
 https://yosuke4061.com/
 
+- https://yosuke4061.com/new_toppage/briefings/brief153/
+- https://yosuke4061.com/new_toppage/briefings/brief153_en/
+
 The core is two steps. A graph network builds a cross field on the triangle mesh: a direction at each point, learned from that mesh alone. Instant Meshes then lays the quad faces along that field.
 
 The result is a quad mesh (OBJ). Colors are not painted anew. The original mesh colors are copied onto the quad vertices.
