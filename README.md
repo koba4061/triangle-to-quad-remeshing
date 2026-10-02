@@ -29,7 +29,9 @@ You get two files, named from the input. `03_golden_scale_dragon.glb` becomes th
 | `03_golden_scale_dragon_quad.obj` | Quad faces, with vertices, normals, and vertex colors |
 | `03_golden_scale_dragon_color.obj` | The same quads, with vertex colors only. Open this one |
 
-Each vertex is `v x y z r g b`. RGB is from 0 to 1. No materials and no textures are written. For metalness, roughness, or a normal map, bake them yourself in Blender. Use the original GLB as the source and this quad OBJ as the target.
+## Caution
+
+PBR materials and textures on the input GLB are discarded. The output mesh bakes vertex color only. Each vertex is `v x y z r g b`, with RGB from 0 to 1. Metalness, roughness, normal maps, and image textures are not in the OBJ. Bake those yourself in Blender if you need them. Use the original GLB as the source and this quad OBJ as the target.
 
 ## What it does
 
