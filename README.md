@@ -81,6 +81,34 @@ An input with more than 790,000 faces is reduced to 790,000 for the field and fo
 
 The run stops before training when too many triangles are skinny: height under 2% of the longest edge, on more than 0.15% of the faces. It also stops when Instant Meshes returns no faces.
 
+## Example: golden scale dragon
+
+Colab, NVIDIA A100-SXM4-40GB, 2 October 2026. Input `03_golden_scale_dragon.glb`.
+
+The graph network stopped at epoch 188 of 200. The whole quad pipeline took 15 minutes 27 seconds. Training on this GPU was 21 seconds. Extraction and surface fit took 9 minutes 14 seconds.
+
+| | |
+| --- | --- |
+| Input | 91,803,276 bytes, 621,783 vertices, 694,850 triangles |
+| Field mesh | 332,485 vertices, 698,357 faces |
+| Quad target | 267,250 |
+| Output | 852,161 vertices, 845,159 quads, 0 triangles |
+| Quad OBJ | 132,765,607 bytes |
+| Vertex-color OBJ | 79,321,939 bytes |
+| Quality | score 0.127, pole ratio 0.065, passed |
+
+Input triangles.
+
+![Input triangles](images/dragon_input_triangles.png)
+
+![Input color](images/dragon_input_color.jpg)
+
+Quad mesh from the learned cross field.
+
+![Quad mesh](images/dragon_quad_wire.png)
+
+![Quad vertex color](images/dragon_quad_color.jpg)
+
 ## References
 
 1. Dong et al. NeurCross: A neural approach to computing cross fields for quad mesh generation. *ACM Transactions on Graphics* (SIGGRAPH), 2025. https://arxiv.org/abs/2405.13745
