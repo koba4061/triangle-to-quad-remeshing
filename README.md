@@ -9,7 +9,7 @@ The result is a quad mesh (OBJ). Colors are not painted anew. The original mesh 
 
 Run the notebook in Colab from top to bottom. Use a GPU runtime with Python 3.13. Do not change the runtime after you start. This notebook does not use ComfyUI.
 
-[Open in Colab](https://colab.research.google.com/github/koba4061/triangle-to-quad-remeshing-/blob/main/learned_cross_field_quad_remeshing.ipynb)
+[Open in Colab](https://colab.research.google.com/github/koba4061/triangle-to-quad-remeshing/blob/main/learned_cross_field_quad_remeshing.ipynb)
 
 ## What you do
 
