@@ -3,18 +3,18 @@
 <head>
 <meta charset="utf-8">
 <style>
-html, body { margin: 0; height: 100%; overflow: hidden; background: #111; color: #ddd; font: 14px sans-serif; }
-#bar { position: absolute; z-index: 2; padding: 8px; }
-button { margin-right: 6px; }
+html, body { margin: 0; height: 100%; overflow: hidden; background: #fff; color: #111; font: 14px sans-serif; }
+#bar { position: absolute; z-index: 2; left: 8px; top: 8px; }
+button { margin-right: 6px; padding: 6px 10px; }
+#stage { position: absolute; inset: 0; }
 canvas { display: block; width: 100%; height: 100%; }
 </style>
 </head>
 <body>
 <div id="bar">
-<button id="wire" type="button">ワイヤー</button>
-<button id="tex" type="button">テクスチャ</button>
-<button id="vc" type="button">頂点色</button>
+<button id="wire" type="button">Wire</button>
 </div>
+<div id="stage"></div>
 <script type="importmap">
 {"imports":{
   "three": "https://unpkg.com/three@0.160.0/build/three.module.js",
@@ -26,31 +26,54 @@ import * as THREE from "three";
 import { OrbitControls } from "three/addons/controls/OrbitControls.js";
 import { OBJLoader } from "three/addons/loaders/OBJLoader.js";
 
+const stage = document.getElementById("stage");
 const scene = new THREE.Scene();
-scene.background = new THREE.Color(0x111111);
-const cam = new THREE.PerspectiveCamera(45, 1, 0.01, 1000);
+scene.background = new THREE.Color(0xffffff);
+const cam = new THREE.PerspectiveCamera(45, 1, 0.01, 100);
 const ren = new THREE.WebGLRenderer({ antialias: true });
-document.body.appendChild(ren.domElement);
-function viewport() {
-  return {
-    w: document.documentElement.clientWidth,
-    h: document.documentElement.clientHeight,
-  };
-}
+ren.toneMapping = THREE.NoToneMapping;
+ren.setPixelRatio(Math.min(devicePixelRatio || 1, 2));
+stage.appendChild(ren.domElement);
+const ctl = new OrbitControls(cam, ren.domElement);
+ctl.enableDamping = true;
+ctl.target.set(0, 0, 0);
+scene.add(new THREE.AmbientLight(0xffffff, 1.6));
+const key = new THREE.DirectionalLight(0xffffff, 1.8);
+key.position.set(2, 3, 4);
+scene.add(key);
+const fill = new THREE.DirectionalLight(0xffffff, 0.9);
+fill.position.set(-2, -1, -2);
+scene.add(fill);
+
 function resize() {
-  const { w, h } = viewport();
-  cam.aspect = w / Math.max(h, 1);
+  const w = stage.clientWidth || window.innerWidth || 640;
+  const h = stage.clientHeight || window.innerHeight || 640;
+  if (w < 2 || h < 2) return;
+  cam.aspect = w / h;
   cam.updateProjectionMatrix();
   ren.setSize(w, h, false);
 }
+new ResizeObserver(resize).observe(stage);
 resize();
-const ctl = new OrbitControls(cam, ren.domElement);
-scene.add(new THREE.AmbientLight(0xffffff, 0.65));
-const dl = new THREE.DirectionalLight(0xffffff, 0.85);
-dl.position.set(1, 2, 3);
-scene.add(dl);
 
 let root = null;
+let wire = false;
+function frame(g) {
+  const box = new THREE.Box3().setFromObject(g);
+  const size = box.getSize(new THREE.Vector3());
+  const radius = Math.max(size.length(), 1e-4);
+  g.position.sub(box.getCenter(new THREE.Vector3()));
+  cam.near = radius * 0.001;
+  cam.far = radius * 50;
+  cam.updateProjectionMatrix();
+  ctl.minDistance = radius * 0.15;
+  ctl.maxDistance = radius * 8;
+  cam.position.set(0, radius * 0.15, radius * 1.35);
+  ctl.target.set(0, 0, 0);
+  ctl.update();
+  resize();
+}
+
 async function exists(name) {
   const r = await fetch(name, { method: "HEAD" });
   return r.ok;
@@ -59,51 +82,25 @@ const objName = (await exists("color.obj")) ? "color.obj" : "quad.obj";
 new OBJLoader().load(objName, (g) => {
   g.traverse((o) => {
     if (!o.isMesh) return;
+    const hasColor = !!(o.geometry && o.geometry.getAttribute("color"));
     o.material = new THREE.MeshStandardMaterial({
-      color: 0xcccccc,
-      vertexColors: true,
+      color: 0xffffff,
+      vertexColors: hasColor,
       side: THREE.DoubleSide,
-      metalness: 0.05,
-      roughness: 0.75,
+      metalness: 0,
+      roughness: 0.55,
+      wireframe: wire,
     });
   });
-  const box = new THREE.Box3().setFromObject(g);
-  const size = box.getSize(new THREE.Vector3()).length() || 1;
-  g.position.sub(box.getCenter(new THREE.Vector3()));
-  cam.near = size * 0.01;
-  cam.far = size * 20;
-  cam.updateProjectionMatrix();
-  ctl.minDistance = size * 0.2;
-  ctl.maxDistance = size * 6;
-  cam.position.set(0, size * 0.25, size * 1.15);
   scene.add(g);
   root = g;
+  frame(g);
 });
 
 document.getElementById("wire").onclick = () => {
+  wire = !wire;
   if (!root) return;
-  root.traverse((o) => { if (o.isMesh) o.material.wireframe = !o.material.wireframe; });
-};
-document.getElementById("tex").onclick = async () => {
-  if (!root || !(await exists("color.png"))) return;
-  const tex = new THREE.TextureLoader().load("color.png");
-  tex.colorSpace = THREE.SRGBColorSpace;
-  tex.flipY = true;
-  root.traverse((o) => {
-    if (!o.isMesh) return;
-    o.material.map = tex;
-    o.material.vertexColors = false;
-    o.material.needsUpdate = true;
-  });
-};
-document.getElementById("vc").onclick = () => {
-  if (!root) return;
-  root.traverse((o) => {
-    if (!o.isMesh) return;
-    o.material.map = null;
-    o.material.vertexColors = true;
-    o.material.needsUpdate = true;
-  });
+  root.traverse((o) => { if (o.isMesh) o.material.wireframe = wire; });
 };
 addEventListener("resize", resize);
 (function loop() {
