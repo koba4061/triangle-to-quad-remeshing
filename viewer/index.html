@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<style>
+html, body { margin: 0; height: 100%; overflow: hidden; background: #111; color: #ddd; font: 14px sans-serif; }
+#bar { position: absolute; z-index: 2; padding: 8px; }
+button { margin-right: 6px; }
+canvas { display: block; width: 100%; height: 100%; }
+</style>
+</head>
+<body>
+<div id="bar">
+<button id="wire" type="button">ワイヤー</button>
+<button id="tex" type="button">テクスチャ</button>
+<button id="vc" type="button">頂点色</button>
+</div>
+<script type="importmap">
+{"imports":{
+  "three": "https://unpkg.com/three@0.160.0/build/three.module.js",
+  "three/addons/": "https://unpkg.com/three@0.160.0/examples/jsm/"
+}}
+</script>
+<script type="module">
+import * as THREE from "three";
+import { OrbitControls } from "three/addons/controls/OrbitControls.js";
+import { OBJLoader } from "three/addons/loaders/OBJLoader.js";
+
+const scene = new THREE.Scene();
+scene.background = new THREE.Color(0x111111);
+const cam = new THREE.PerspectiveCamera(45, 1, 0.01, 1000);
+const ren = new THREE.WebGLRenderer({ antialias: true });
+document.body.appendChild(ren.domElement);
+function viewport() {
+  return {
+    w: document.documentElement.clientWidth,
+    h: document.documentElement.clientHeight,
+  };
+}
+function resize() {
+  const { w, h } = viewport();
+  cam.aspect = w / Math.max(h, 1);
+  cam.updateProjectionMatrix();
+  ren.setSize(w, h, false);
+}
+resize();
+const ctl = new OrbitControls(cam, ren.domElement);
+scene.add(new THREE.AmbientLight(0xffffff, 0.65));
+const dl = new THREE.DirectionalLight(0xffffff, 0.85);
+dl.position.set(1, 2, 3);
+scene.add(dl);
+
+let root = null;
+async function exists(name) {
+  const r = await fetch(name, { method: "HEAD" });
+  return r.ok;
+}
+const objName = (await exists("color.obj")) ? "color.obj" : "quad.obj";
+new OBJLoader().load(objName, (g) => {
+  g.traverse((o) => {
+    if (!o.isMesh) return;
+    o.material = new THREE.MeshStandardMaterial({
+      color: 0xcccccc,
+      vertexColors: true,
+      side: THREE.DoubleSide,
+      metalness: 0.05,
+      roughness: 0.75,
+    });
+  });
+  const box = new THREE.Box3().setFromObject(g);
+  const size = box.getSize(new THREE.Vector3()).length() || 1;
+  g.position.sub(box.getCenter(new THREE.Vector3()));
+  cam.near = size * 0.01;
+  cam.far = size * 20;
+  cam.updateProjectionMatrix();
+  ctl.minDistance = size * 0.2;
+  ctl.maxDistance = size * 6;
+  cam.position.set(0, size * 0.25, size * 1.15);
+  scene.add(g);
+  root = g;
+});
+
+document.getElementById("wire").onclick = () => {
+  if (!root) return;
+  root.traverse((o) => { if (o.isMesh) o.material.wireframe = !o.material.wireframe; });
+};
+document.getElementById("tex").onclick = async () => {
+  if (!root || !(await exists("color.png"))) return;
+  const tex = new THREE.TextureLoader().load("color.png");
+  tex.colorSpace = THREE.SRGBColorSpace;
+  tex.flipY = true;
+  root.traverse((o) => {
+    if (!o.isMesh) return;
+    o.material.map = tex;
+    o.material.vertexColors = false;
+    o.material.needsUpdate = true;
+  });
+};
+document.getElementById("vc").onclick = () => {
+  if (!root) return;
+  root.traverse((o) => {
+    if (!o.isMesh) return;
+    o.material.map = null;
+    o.material.vertexColors = true;
+    o.material.needsUpdate = true;
+  });
+};
+addEventListener("resize", resize);
+(function loop() {
+  requestAnimationFrame(loop);
+  ctl.update();
+  ren.render(scene, cam);
+})();
+</script>
+</body>
+</html>

@@ -10,7 +10,7 @@ The core is two steps. A graph network builds a cross field on the triangle mesh
 
 The result is a quad mesh (OBJ). Colors are not painted anew. The original mesh colors are copied onto the quad vertices.
 
-Run the notebook in Colab from top to bottom. Use a GPU runtime with Python 3.13. Do not change the runtime after you start. This notebook does not use ComfyUI.
+Run the notebook in Colab from top to bottom. Use a GPU runtime. Do not change the runtime after you start. The notebook builds Instant Meshes for that Python. This notebook does not use ComfyUI.
 
 [Open in Colab](https://colab.research.google.com/github/koba4061/triangle-to-quad-remeshing/blob/main/learned_cross_field_quad_remeshing.ipynb)
 
@@ -23,7 +23,7 @@ flowchart LR
   C --> D["Original color<br/>on vertices"]
 ```
 
-Pick a sample from the list, or choose `upload` and send your own GLB. Samples and the program come from `inputs/` and `brief153_colab.zip` in this repository.
+Pick a sample from the list, or choose `upload` and send your own GLB. Samples are in `inputs/`. The program is `gnn_quad_retopo/`. `im_gnn_bridge/` is the source the notebook compiles.
 
 You get two files, named from the input. `03_golden_scale_dragon.glb` becomes the names below. The download zip uses the same stem.
 
