@@ -12,6 +12,8 @@ canvas { display: block; width: 100%; height: 100%; }
 </head>
 <body>
 <div id="bar">
+<button id="zin" type="button">+</button>
+<button id="zout" type="button">−</button>
 <button id="wire" type="button">Wire</button>
 </div>
 <div id="stage"></div>
@@ -38,17 +40,16 @@ const ctl = new OrbitControls(cam, ren.domElement);
 ctl.enableDamping = true;
 ctl.enableZoom = false;
 ctl.target.set(0, 0, 0);
-ren.domElement.addEventListener("wheel", (e) => {
-  e.preventDefault();
-  const ticks = Math.sign(e.deltaY) * Math.min(Math.abs(e.deltaY) / 100, 1);
-  if (!ticks) return;
+function zoomBy(factor) {
   const dist = cam.position.distanceTo(ctl.target);
-  const next = dist * Math.pow(1.12, ticks);
+  const next = dist * factor;
   const clamped = Math.min(ctl.maxDistance, Math.max(ctl.minDistance, next));
-  cam.position.copy(ctl.target).add(
-    cam.position.clone().sub(ctl.target).normalize().multiplyScalar(clamped)
-  );
-}, { passive: false });
+  const dir = cam.position.clone().sub(ctl.target);
+  if (dir.lengthSq() < 1e-12) return;
+  cam.position.copy(ctl.target).add(dir.normalize().multiplyScalar(clamped));
+}
+document.getElementById("zin").onclick = () => zoomBy(1 / 1.12);
+document.getElementById("zout").onclick = () => zoomBy(1.12);
 scene.add(new THREE.AmbientLight(0xffffff, 1.6));
 const key = new THREE.DirectionalLight(0xffffff, 1.8);
 key.position.set(2, 3, 4);
