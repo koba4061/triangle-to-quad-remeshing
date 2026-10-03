@@ -29,8 +29,8 @@ You get two files, named from the input. `03_golden_scale_dragon.glb` becomes th
 
 | File | Contents |
 | --- | --- |
-| `03_golden_scale_dragon_quad.obj` | Quad faces, with vertices, normals, and vertex colors |
-| `03_golden_scale_dragon_color.obj` | The same quads, with vertex colors only. Open this one |
+| `03_golden_scale_dragon_quad.obj` | Quad faces and vertex positions. No normals |
+| `03_golden_scale_dragon_color.obj` | The same quads, with vertex colors (`v x y z r g b`). Open this one |
 
 ## Caution
 

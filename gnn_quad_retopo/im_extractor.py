@@ -373,22 +373,6 @@ def _export_im_quad_obj(
     else:
         for v in vertices:
             lines.append(f"v {v[0]:.8f} {v[1]:.8f} {v[2]:.8f}")
-    tris = []
-    for f in faces:
-        if len(f) >= 4:
-            tris.append((int(f[0]), int(f[1]), int(f[2])))
-            tris.append((int(f[0]), int(f[2]), int(f[3])))
-        else:
-            tris.append(tuple(int(x) for x in f[:3]))
-    acc = np.zeros_like(vertices, dtype=np.float64)
-    tri_a = np.asarray(tris, dtype=np.int64)
-    fn = np.cross(vertices[tri_a[:, 1]] - vertices[tri_a[:, 0]], vertices[tri_a[:, 2]] - vertices[tri_a[:, 0]])
-    for k in range(3):
-        np.add.at(acc, tri_a[:, k], fn)
-    ln = np.linalg.norm(acc, axis=1, keepdims=True)
-    acc = acc / np.maximum(ln, 1e-12)
-    for n in acc:
-        lines.append(f"vn {n[0]:.6f} {n[1]:.6f} {n[2]:.6f}")
     for f in faces:
         if f.shape[0] == 4 and f[2] == f[3]:
             idx = f[:3]
@@ -398,7 +382,7 @@ def _export_im_quad_obj(
             idx = f
         if len(set(int(x) for x in idx)) < len(idx):
             continue
-        parts = " ".join("%d//%d" % (int(i) + 1, int(i) + 1) for i in idx)
+        parts = " ".join(str(int(i) + 1) for i in idx)
         lines.append(f"f {parts}")
     path.write_text("\n".join(lines) + "\n", encoding="utf-8")
 
