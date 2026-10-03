@@ -36,7 +36,19 @@ ren.setPixelRatio(Math.min(devicePixelRatio || 1, 2));
 stage.appendChild(ren.domElement);
 const ctl = new OrbitControls(cam, ren.domElement);
 ctl.enableDamping = true;
+ctl.enableZoom = false;
 ctl.target.set(0, 0, 0);
+ren.domElement.addEventListener("wheel", (e) => {
+  e.preventDefault();
+  const ticks = Math.sign(e.deltaY) * Math.min(Math.abs(e.deltaY) / 100, 1);
+  if (!ticks) return;
+  const dist = cam.position.distanceTo(ctl.target);
+  const next = dist * Math.pow(1.12, ticks);
+  const clamped = Math.min(ctl.maxDistance, Math.max(ctl.minDistance, next));
+  cam.position.copy(ctl.target).add(
+    cam.position.clone().sub(ctl.target).normalize().multiplyScalar(clamped)
+  );
+}, { passive: false });
 scene.add(new THREE.AmbientLight(0xffffff, 1.6));
 const key = new THREE.DirectionalLight(0xffffff, 1.8);
 key.position.set(2, 3, 4);
